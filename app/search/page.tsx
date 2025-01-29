@@ -37,16 +37,6 @@ const allProducts = [
     reviewCount: 200,
   },
   {
-    id: "pizza2",
-    name: "Пепперони",
-    price: 3500,
-    image:
-      "https://images.unsplash.com/photo-1628840042765-356cda07504e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1780&q=80",
-    category: "pizza",
-    rating: 4.6,
-    reviewCount: 180,
-  },
-  {
     id: "burger1",
     name: "Классический",
     price: 1800,
@@ -56,98 +46,37 @@ const allProducts = [
     rating: 4.3,
     reviewCount: 150,
   },
-  {
-    id: "burger2",
-    name: "Чизбургер",
-    price: 2000,
-    image:
-      "https://images.unsplash.com/photo-1551615593-ef5fe247e8f7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    category: "burgers",
-    rating: 4.4,
-    reviewCount: 130,
-  },
-  {
-    id: "drink1",
-    name: "Кола",
-    price: 500,
-    image:
-      "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    category: "drinks",
-    rating: 4.0,
-    reviewCount: 80,
-  },
-  {
-    id: "drink2",
-    name: "Лимонад",
-    price: 600,
-    image:
-      "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80",
-    category: "drinks",
-    rating: 4.1,
-    reviewCount: 75,
-  },
-  {
-    id: "sauce1",
-    name: "Кетчуп",
-    price: 200,
-    image:
-      "https://images.unsplash.com/photo-1607604760903-1961a8e4fc8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80",
-    category: "sauces",
-    rating: 3.9,
-    reviewCount: 50,
-  },
-  {
-    id: "sauce2",
-    name: "Майонез",
-    price: 200,
-    image:
-      "https://images.unsplash.com/photo-1585302769412-25972143ede8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    category: "sauces",
-    rating: 3.8,
-    reviewCount: 45,
-  },
-]
-export default function SearchResults() {
-  const searchParams = useSearchParams();
-  const query = searchParams?.get("q") || ""; // Получение параметра поиска
+];
+
+export default function SearchPage() {
+  const searchParams = useSearchParams(); // Получаем параметры поиска
+  const query = searchParams?.get("q")?.toLowerCase() || ""; // Получаем строку поиска
   const [filteredProducts, setFilteredProducts] = useState(allProducts); // Отфильтрованные продукты
   const [sortBy, setSortBy] = useState("name"); // Параметр сортировки
 
   // Фильтрация продуктов
-  const filterProducts = useCallback(
-    (query) => {
-      return allProducts.filter((product) =>
-        product.name.toLowerCase().includes(query.toLowerCase())
-      );
-    },
-    [allProducts]
-  );
+  const filterProducts = useCallback(() => {
+    return allProducts.filter((product) =>
+      product.name.toLowerCase().includes(query)
+    );
+  }, [query]);
 
   // Сортировка продуктов
-  const sortProducts = useCallback((products, sortBy) => {
+  const sortProducts = useCallback((products) => {
     return [...products].sort((a, b) => {
-      if (sortBy === "name") {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy === "price_asc") {
-        return a.price - b.price;
-      } else if (sortBy === "price_desc") {
-        return b.price - a.price;
-      }
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      if (sortBy === "price_asc") return a.price - b.price;
+      if (sortBy === "price_desc") return b.price - a.price;
       return 0;
     });
-  }, []);
+  }, [sortBy]);
 
-  // Обновление продуктов при изменении запроса
+  // Обновление продуктов при изменении запроса или сортировки
   useEffect(() => {
-    const filtered = filterProducts(query);
-    setFilteredProducts(filtered);
-  }, [query, filterProducts]);
-
-  // Обновление продуктов при изменении сортировки
-  useEffect(() => {
-    const sorted = sortProducts(filteredProducts, sortBy);
+    const filtered = filterProducts();
+    const sorted = sortProducts(filtered);
     setFilteredProducts(sorted);
-  }, [sortBy, filteredProducts, sortProducts]);
+  }, [filterProducts, sortProducts]);
 
   // Рендер страницы
   return (
