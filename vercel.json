@@ -1,0 +1,19 @@
+{
+<<<<<<< HEAD
+  "version": 2,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs"
+=======
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "installCommand": "npm install --legacy-peer-deps"
+      }
+    }
+  ]
+>>>>>>> a58e5eff2727ae94d16ba417f085578e6369c28b
+}
+
