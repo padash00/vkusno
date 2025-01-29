@@ -1,41 +1,45 @@
 "use client"
 
-import { useUser } from "../../contexts/UserContext"
+import { useState } from "react"
+import { useUser } from "../contexts/UserContext"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
 import { motion } from "framer-motion"
-import { Trash2 } from "lucide-react"
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-<<<<<<< HEAD
 import { Label } from "@/components/ui/label"
 import PhoneVerificationStatus from "../components/PhoneVerificationStatus"
 import { formatDate } from "../utils/date"
-=======
-import { useEffect, useState } from "react"
->>>>>>> a58e5eff2727ae94d16ba417f085578e6369c28b
 
-export default function FavoritesPage() {
-  const { user, removeFromFavorites } = useUser()
+export default function ProfilePage() {
+  const { user, updateUserInfo } = useUser()
   const router = useRouter()
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  if (!isClient) {
-    return null // или можно вернуть заглушку, например, <div>Loading...</div>
-  }
+  const [editMode, setEditMode] = useState(false)
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    address: user?.address || "",
+  })
 
   if (!user) {
     router.push("/login")
     return null
   }
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    updateUserInfo(formData)
+    setEditMode(false)
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
-<<<<<<< HEAD
       <h1 className="text-3xl font-bold mb-6">Профиль пользователя</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card>
@@ -161,47 +165,6 @@ export default function FavoritesPage() {
           )}
         </CardContent>
       </Card>
-=======
-      <h1 className="text-3xl font-bold mb-6">Избранные блюда</h1>
-      {user.favorites.length === 0 ? (
-        <p className="text-gray-400">У вас пока нет избранных блюд.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {user.favorites.map((item) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="bg-gray-800 rounded-lg shadow-md overflow-hidden"
-            >
-              <Card>
-                <CardHeader className="p-4">
-                  <CardTitle className="text-lg">{item.name}</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="relative h-48">
-                    <Image
-                      src={item.image || "/placeholder.svg"}
-                      alt={item.name}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-md"
-                    />
-                  </div>
-                  <p className="mt-2 text-gray-300">{item.price} ₸</p>
-                  <Button variant="destructive" size="sm" className="mt-4" onClick={() => removeFromFavorites(item.id)}>
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Удалить из избранного
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      )}
->>>>>>> a58e5eff2727ae94d16ba417f085578e6369c28b
     </div>
   )
 }
