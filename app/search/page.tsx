@@ -107,9 +107,7 @@ const allProducts = [
     reviewCount: 45,
   },
 ]
-export const dynamic = "force-dynamic";
-
-export default function SearchPage() {
+export default function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams?.get("q") || ""; // Получение параметра поиска
   const [filteredProducts, setFilteredProducts] = useState(allProducts); // Отфильтрованные продукты
@@ -183,4 +181,3 @@ export default function SearchPage() {
     </div>
   );
 }
-
