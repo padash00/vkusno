@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useSearchParams } from "next/navigation"
-import ProductCard from "../components/ProductCard"
-import { useState, useEffect, useCallback } from "react"
+import { useSearchParams } from "next/navigation";
+import ProductCard from "../components/ProductCard";
+import { useState, useEffect, useCallback } from "react";
 
-// This would typically come from an API or database
+// Продукты
 const allProducts = [
   {
     id: "sushi1",
@@ -107,40 +107,51 @@ const allProducts = [
     reviewCount: 45,
   },
 ]
-
-const filterProducts = useCallback((query: string) => {
-  return allProducts.filter((product) => product.name.toLowerCase().includes(query.toLowerCase()))
-}, [])
-
-const sortProducts = useCallback((products: typeof allProducts, sortBy: string) => {
-  return [...products].sort((a, b) => {
-    if (sortBy === "name") {
-      return a.name.localeCompare(b.name)
-    } else if (sortBy === "price_asc") {
-      return a.price - b.price
-    } else if (sortBy === "price_desc") {
-      return b.price - a.price
-    }
-    return 0
-  })
-}, [])
+export const dynamic = "force-dynamic";
 
 export default function SearchPage() {
-  const searchParams = useSearchParams()
-  const query = searchParams.get("q") || ""
-  const [filteredProducts, setFilteredProducts] = useState(allProducts)
-  const [sortBy, setSortBy] = useState("name")
+  const searchParams = useSearchParams();
+  const query = searchParams?.get("q") || ""; // Получение параметра поиска
+  const [filteredProducts, setFilteredProducts] = useState(allProducts); // Отфильтрованные продукты
+  const [sortBy, setSortBy] = useState("name"); // Параметр сортировки
 
+  // Фильтрация продуктов
+  const filterProducts = useCallback(
+    (query) => {
+      return allProducts.filter((product) =>
+        product.name.toLowerCase().includes(query.toLowerCase())
+      );
+    },
+    [allProducts]
+  );
+
+  // Сортировка продуктов
+  const sortProducts = useCallback((products, sortBy) => {
+    return [...products].sort((a, b) => {
+      if (sortBy === "name") {
+        return a.name.localeCompare(b.name);
+      } else if (sortBy === "price_asc") {
+        return a.price - b.price;
+      } else if (sortBy === "price_desc") {
+        return b.price - a.price;
+      }
+      return 0;
+    });
+  }, []);
+
+  // Обновление продуктов при изменении запроса
   useEffect(() => {
-    const filtered = filterProducts(query)
-    setFilteredProducts(filtered)
-  }, [query, filterProducts])
+    const filtered = filterProducts(query);
+    setFilteredProducts(filtered);
+  }, [query, filterProducts]);
 
+  // Обновление продуктов при изменении сортировки
   useEffect(() => {
-    const sorted = sortProducts(filteredProducts, sortBy)
-    setFilteredProducts(sorted)
-  }, [sortBy, filteredProducts, sortProducts])
+    const sorted = sortProducts(filteredProducts, sortBy);
+    setFilteredProducts(sorted);
+  }, [sortBy, filteredProducts, sortProducts]);
 
+  // Рендер страницы
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Результаты поиска: {query}</h1>
@@ -148,7 +159,12 @@ export default function SearchPage() {
         <label htmlFor="sort" className="mr-2">
           Сортировать по:
         </label>
-        <select id="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="border rounded p-1">
+        <select
+          id="sort"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="border rounded p-1"
+        >
           <option value="name">Названию</option>
           <option value="price_asc">Цене (по возрастанию)</option>
           <option value="price_desc">Цене (по убыванию)</option>
@@ -160,9 +176,11 @@ export default function SearchPage() {
         ))}
       </div>
       {filteredProducts.length === 0 && (
-        <p className="text-center text-gray-500 mt-8">Ничего не найдено. Попробуйте изменить запрос.</p>
+        <p className="text-center text-gray-500 mt-8">
+          Ничего не найдено. Попробуйте изменить запрос.
+        </p>
       )}
     </div>
-  )
+  );
 }
 
