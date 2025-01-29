@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { useCart } from "../contexts/CartContext"
-import { useRouter } from "next/navigation"
 import { useUser } from "../contexts/UserContext"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { useRouter } from "next/navigation"
 
 export default function CheckoutPage() {
   const { cartItems, clearCart, checkout } = useCart()
@@ -63,7 +63,7 @@ export default function CheckoutPage() {
     router.push("/thank-you")
   }
 
-  if (!user) {
+  if (typeof window !== "undefined" && !user) {
     router.push("/login")
     return null
   }
