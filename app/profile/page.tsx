@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import PhoneVerificationStatus from "../components/PhoneVerificationStatus"
+import { formatDate } from "../utils/date"
 
 export default function ProfilePage() {
   const { user, updateUserInfo } = useUser()
@@ -147,7 +148,7 @@ export default function ProfilePage() {
                   transition={{ duration: 0.3 }}
                 >
                   <p className="font-bold">Заказ №{order.id}</p>
-                  <p>Дата: {new Date(order.date).toLocaleDateString()}</p>
+                  <p>Дата: {formatDate(order.date)}</p>
                   <p>Сумма: {order.total} ₸</p>
                   <ul className="mt-2">
                     {order.items.map((item, index) => (
