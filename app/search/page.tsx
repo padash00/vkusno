@@ -47,11 +47,12 @@ const allProducts = [
     reviewCount: 150,
   },
 ];
+export const dynamic = "force-dynamic";
 
 export default function SearchPage() {
-  const searchParams = useSearchParams(); // Получаем параметры поиска
-  const query = searchParams?.get("q")?.toLowerCase() || ""; // Получаем строку поиска
-  const [filteredProducts, setFilteredProducts] = useState(allProducts); // Отфильтрованные продукты
+  const searchParams = useSearchParams(); // Получение параметров строки запроса
+  const query = searchParams?.get("q")?.toLowerCase() || ""; // Получение строки поиска
+  const [filteredProducts, setFilteredProducts] = useState(allProducts); // Состояние фильтрованных продуктов
   const [sortBy, setSortBy] = useState("name"); // Параметр сортировки
 
   // Фильтрация продуктов
@@ -71,14 +72,13 @@ export default function SearchPage() {
     });
   }, [sortBy]);
 
-  // Обновление продуктов при изменении запроса или сортировки
+  // Обновление фильтрованных и отсортированных продуктов
   useEffect(() => {
     const filtered = filterProducts();
     const sorted = sortProducts(filtered);
     setFilteredProducts(sorted);
   }, [filterProducts, sortProducts]);
 
-  // Рендер страницы
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Результаты поиска: {query}</h1>
